@@ -28,11 +28,13 @@ public class ListOfDaysFragment extends Fragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setHasFixedSize(true);
         initRecyclerView();
+
         return view;
     }
 
 
     public void initRecyclerView() {
+        new RetrofitClient().downloadWeather("22", "33");
         if (mDayAdapter == null) {
             mDayAdapter = new DayAdapter();
             mRecyclerView.setAdapter(mDayAdapter);
