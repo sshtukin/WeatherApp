@@ -6,6 +6,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -62,6 +63,7 @@ public class ListOfDaysFragment extends Fragment {
                     public void onConnected(Bundle bundle) {
                         getActivity().invalidateOptionsMenu();
                     }
+
                     @Override
                     public void onConnectionSuspended(int i) {
                     }
@@ -81,10 +83,9 @@ public class ListOfDaysFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_locate:
-                if (hasLocationPermission()){
+                if (hasLocationPermission()) {
                     getLocation();
-                }
-                else {
+                } else {
                     requestPermissions(LOCATION_PERMISSIONS,
                             REQUEST_LOCATION_PERMISSIONS);
                 }
@@ -115,17 +116,17 @@ public class ListOfDaysFragment extends Fragment {
         request.setNumUpdates(1);
         request.setInterval(0);
 
+
         LocationServices.FusedLocationApi
                 .requestLocationUpdates(mClient, request, new LocationListener() {
                     @Override
                     public void onLocationChanged(Location location) {
-//                        Log.i(TAG, "Got a fix: " + location);
-//                        downloadWeather(String.valueOf(location.getAltitude()), String.valueOf(location.getLatitude()));
                         final RetrofitClient retrofitClient = new RetrofitClient();
 
                         final List<ClearedWeather> clearedWeatherList = new ArrayList<>();
-                        Call<Weather> call = retrofitClient.getCall(String.valueOf(location.getAltitude()),
-                                String.valueOf(location.getLatitude()));
+                        Log.i(TAG, String.valueOf(location.getAltitude()));
+                        Call<Weather> call = retrofitClient.getCall(String.valueOf(location.getLatitude()),
+                                String.valueOf(location.getLongitude()));
                         call.enqueue(new Callback<Weather>() {
                             @Override
                             public void onResponse(Call<Weather> call, Response<Weather> response) {
@@ -139,6 +140,7 @@ public class ListOfDaysFragment extends Fragment {
                                     Log.i(TAG, clearedWeather.getDay());
                                     Log.i(TAG, String.valueOf(clearedWeather.getMaxTemp()));
                                     Log.i(TAG, String.valueOf(clearedWeather.getMinTemp()));
+                                    Log.i(TAG, weather.getCity().getName());
                                 }
                                 initRecyclerView(clearedWeatherList);
                             }
@@ -170,9 +172,6 @@ public class ListOfDaysFragment extends Fragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setHasFixedSize(true);
         mCityName = view.findViewById(R.id.city_name);
-
-
-
         return view;
     }
 
@@ -191,7 +190,6 @@ public class ListOfDaysFragment extends Fragment {
 
 
     public void initRecyclerView(List<ClearedWeather> clearedWeatherList) {
-        Log.w("LOFF", "HELLOOOOOOOOOOOOOOOOO");
         if (mDayAdapter == null) {
             mDayAdapter = new DayAdapter();
             mDayAdapter.setItems(clearedWeatherList);
@@ -205,7 +203,6 @@ public class ListOfDaysFragment extends Fragment {
     private class DayHolder extends RecyclerView.ViewHolder{
         TextView mDayOfWeek;
         TextView mTempText;
-        TextView mCityName;
         TextView mDescription;
         ImageView mImageView;
 
@@ -226,8 +223,7 @@ public class ListOfDaysFragment extends Fragment {
             Picasso.get()
                     .load(clearedWeather.getImage())
                     .placeholder(R.drawable.ic_launcher_background)
-                    .resize(150, 150)
-                    .centerCrop()
+                    .resize(250, 250)
                     .into(mImageView);
         }
     }
@@ -260,5 +256,4 @@ public class ListOfDaysFragment extends Fragment {
             return position;
         }
     }
-
 }

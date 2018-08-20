@@ -1,7 +1,5 @@
 package com.sshtukin.weatherapp;
 
-import android.util.Log;
-
 import com.sshtukin.weatherapp.model.ClearedWeather;
 import com.sshtukin.weatherapp.model.Weather;
 import com.sshtukin.weatherapp.model.WeatherList;
@@ -13,8 +11,6 @@ import java.util.List;
 import java.util.Locale;
 
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 

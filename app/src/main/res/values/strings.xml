@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">WeatherApp</string>
-    <string name="your_location">Your location</string>
+    <string name="your_location">Your location unknown</string>
     <string name="get_my_position">Get my location</string>
 </resources>
