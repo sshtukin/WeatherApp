@@ -30,7 +30,7 @@ public class RetrofitClient {
         return instance;
     }
 
-    private List<ClearedWeather> clearData(List<WeatherList> result_list){
+    public List<ClearedWeather> clearData(List<WeatherList> result_list){
 
         final List<ClearedWeather> clearedWeatherList = new ArrayList<>();
         int i = 0;
@@ -63,6 +63,9 @@ public class RetrofitClient {
                 next_calendar.setTime(next_date);
 
             }
+            if ((calendar.get(Calendar.DAY_OF_WEEK) != next_calendar.get(Calendar.DAY_OF_WEEK)) && (i ==0 )){
+                i++;
+            }
 
             clearedWeather.setDay(calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.US));
             clearedWeather.setMaxTemp(max_temp);
@@ -76,31 +79,10 @@ public class RetrofitClient {
     }
 
 
-    public void downloadWeather(String lat, String lot) {
-
+    public Call<Weather> getCall(String lat, String lot) {
         Retrofit retrofit = getInstance();
         IOpenWeatherMap service = retrofit.create(IOpenWeatherMap.class);
         Call<Weather> call = service.getWeatherByLatLng(lat, lot, api_key, "metric");
-
-        call.enqueue(new Callback<Weather>() {
-            @Override
-            public void onResponse(Call<Weather> call, Response<Weather> response) {
-                Weather weather = response.body();
-                List<WeatherList> result_list = weather.getList();
-                List<ClearedWeather> clearedWeatherList = clearData(result_list);
-
-                for (ClearedWeather clearedWeather : clearedWeatherList) {
-                    Log.i(TAG, "-------------------");
-                    Log.i(TAG, clearedWeather.getDay());
-                    Log.i(TAG, String.valueOf(clearedWeather.getMaxTemp()));
-                    Log.i(TAG, String.valueOf(clearedWeather.getMinTemp()));
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Weather> call, Throwable t) {
-                Log.e(TAG, "Called onFailure", t);
-            }
-        });
+        return call;
     }
 }
